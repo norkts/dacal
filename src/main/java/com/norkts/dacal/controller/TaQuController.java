@@ -154,7 +154,7 @@ public class TaQuController {
         return gifts;
     }
 
-    @RequestMapping("/gift/clear")
+    @RequestMapping(value = "/gift/clear", method = RequestMethod.GET)
     public ResultDTO<Void> clear(){
         lastG2 = null;
         lastG5 = null;
