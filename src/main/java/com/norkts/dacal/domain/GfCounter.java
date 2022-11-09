@@ -21,4 +21,15 @@ public class GfCounter {
     public String toString(){
         return g100Counter.get()+"-" + g10Counter.get() + "-" + g5Counter.get() + "-" + g2Counter.get();
     }
+
+    public void clearG2510(){
+        g2Counter.set(0);
+        g5Counter.set(0);
+        g10Counter.set(0);
+    }
+
+    public void clearAll(){
+        clearG2510();
+        g100Counter.set(0);
+    }
 }

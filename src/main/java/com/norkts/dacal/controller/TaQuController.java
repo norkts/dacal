@@ -78,10 +78,7 @@ public class TaQuController {
 
             if(Objects.equals(g100Name, msg.getGiftName())){
                 lastG100 = msg.getTime();
-                g100Counter.getG2Counter().set(0);
-                g100Counter.getG5Counter().set(0);
-                g100Counter.getG10Counter().set(0);
-                g10NumAfterLastG100.set(0);
+                g100Counter.clearG2510();
 
                 g100Counter.getG100Counter().addAndGet(msg.getNum());
             }
@@ -155,5 +152,21 @@ public class TaQuController {
         }
 
         return gifts;
+    }
+
+    @RequestMapping("/gift/clear")
+    public ResultDTO<Void> clear(){
+        lastG2 = null;
+        lastG5 = null;
+        lastG10 = null;
+        lastG100 = null;
+
+        g2NumAfterLastG5.set(0);
+        g2NumAfterLastG10.set(0);
+        g5NumAfterLastG10.set(0);
+        g10NumAfterLastG100.set(0);
+
+        g100Counter.clearAll();
+        return ResultDTO.<Void>builder().success(true).build();
     }
 }
