@@ -6,10 +6,7 @@ import com.norkts.dacal.domain.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +40,7 @@ public class TaQuController {
     public ResultDTO<GiftNotice> recieveGiftMessage(@RequestBody List<MessageDTO> msgs){
         List<GiftMessage> curGifts = convertGifts(msgs);
 
-        curGifts.stream().sorted().forEach((msg) -> {
+        curGifts.stream().sorted(Comparator.comparing(GiftMessage::getNo)).forEach((msg) -> {
             if(Objects.equals(g2Name, msg.getGiftName())){
 
                 //2分钟以上可能有2.0
