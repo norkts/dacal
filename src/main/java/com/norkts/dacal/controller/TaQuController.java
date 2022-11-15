@@ -34,7 +34,7 @@ public class TaQuController {
     @Resource
     private CommonMapper commonMapper;
 
-    @RequestMapping(value = "/gift/msg", method = RequestMethod.POST)
+    @RequestMapping(value = "/msg/gift", method = RequestMethod.POST)
     public ResultDTO<GiftNotice> recieveGiftMessage(@RequestBody List<MessageDTO> msgs){
 
         for(MessageDTO messageDTO : msgs){
@@ -260,8 +260,10 @@ public class TaQuController {
     }
 
     @RequestMapping(value = "/db/query", method = RequestMethod.GET)
-    public ResultDTO<List<Map<String, Object>>> dbQuery(@RequestParam("table") String table, @RequestParam("where") String where
-            , @RequestParam("start") Long start, @RequestParam("limit") Long limit){
+    public ResultDTO<List<Map<String, Object>>> dbQuery(@RequestParam("table") String table
+            , @RequestParam("where") String where
+            , @RequestParam("start") Long start
+            , @RequestParam("limit") Long limit){
 
         List<Map<String, Object>> rows = commonMapper.queryDataByWhere(table, Optional.ofNullable(where).orElse("1=1"), Optional.ofNullable(start).orElse(0L)
                 , Optional.ofNullable(limit).orElse(1000L));
