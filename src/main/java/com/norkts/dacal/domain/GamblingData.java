@@ -267,7 +267,7 @@ public class GamblingData {
                 g5TimePeriod = System.currentTimeMillis() - lastG5time;
                 if(g5TimePeriod > 5000){
                     windowQueue.add(g5TimePeriod);
-                    yuanYangSummaryHistorys.add(getYuanYangPeriod());
+                    yuanYangSummaryHistorys.add(getYuanYangTime());
                 }
             }
 
