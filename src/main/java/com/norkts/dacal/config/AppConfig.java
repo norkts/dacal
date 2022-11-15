@@ -58,6 +58,12 @@ public class AppConfig {
 
         Config config = CommonUtil.dbMap2Object(rows.get(0), new Config());
 
-        return CommonUtil.pasreObject(config.getValue(), GamblingData.class);
+        GamblingData gamblingData = CommonUtil.pasreObject(config.getValue(), GamblingData.class);
+
+        if(gamblingData == null){
+            gamblingData = new GamblingData();
+        }
+
+        return gamblingData;
     }
 }
