@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.common.collect.Maps;
+import com.norkts.dacal.domain.Config;
+import com.norkts.dacal.types.Constants;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,9 +67,24 @@ public class CommonUtil {
     public static <T> T dbMap2Object(Map<String,Object> objectMap, T result){
 
         for(Field field : result.getClass().getDeclaredFields()){
+            if(Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())){
+                continue;
+            }
+
             field.setAccessible(true);
             try {
-                field.set(result, objectMap.get(toDbColumn(field.getName())));
+                Object val = objectMap.get(toDbColumn(field.getName()));
+                if(field.getType().isAssignableFrom(Date.class)){
+                    if(val instanceof Number){
+                        Date d = new Date();
+                        d.setTime(((Number)val).longValue());
+                        field.set(result, d);
+                    }
+                }else{
+                    field.set(result, val);
+                }
+
+
             } catch (IllegalAccessException e) {
                 try {
                     field.set(result,null);
@@ -106,5 +124,17 @@ public class CommonUtil {
 
         return Arrays.stream(columnName.split("_"))
                 .map(s -> s.substring(0,1).toUpperCase() + s.substring(1)).collect(Collectors.joining());
+    }
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        Map<String, Object> configMap = Maps.newHashMap();
+        configMap.put("key", Constants.GAMBLING_DATA_KEY);
+        configMap.put("value", "{}");
+        configMap.put("gmt_modified", System.currentTimeMillis());
+        configMap.put("gmt_create", System.currentTimeMillis());
+
+
+        System.out.println(toJSONString(dbMap2Object(configMap,config)));
     }
 }
