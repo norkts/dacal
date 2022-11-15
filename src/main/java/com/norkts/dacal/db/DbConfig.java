@@ -37,7 +37,7 @@ public class DbConfig {
 
         SQLiteDataSource dataSource = new SQLiteConnectionPoolDataSource(config);
         try {
-            String url = ResourceUtils.getURL("classpath:db/dacal.db").getPath();
+            String url = ResourceUtils.getURL("/var/db/dacal.db").getPath();
             dataSource.setUrl("jdbc:sqlite:" + url);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
