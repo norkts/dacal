@@ -31,6 +31,15 @@ public class CommonUtil {
         }
     }
 
+    public static String toJSONString(Object object){
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static Map<String, Object> object2DbMap(Object objectDo){
 
         Map<String, Object> dbMap = Maps.newHashMap();
