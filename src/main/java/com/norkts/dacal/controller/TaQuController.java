@@ -83,11 +83,11 @@ public class TaQuController {
             }
 
             if(giftType.getValue() == 500){
-                gamblingData.rollSummary.onG2();
+                gamblingData.rollSummary.onG5();
             }
 
             if(giftType.getValue() == 1000){
-                gamblingData.rollSummary.onG2();
+                gamblingData.rollSummary.onG10();
             }
 
             if(giftType.getValue() == 10000){

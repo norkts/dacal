@@ -13,7 +13,11 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class WindowQueue<T> extends ArrayBlockingQueue<T> {
     private static final long serialVersionUID = -1818403798613768240L;
 
-    private int capacity;
+    private final int capacity;
+    public WindowQueue(){
+        this(16);
+    }
+
     public WindowQueue(int capacity) {
         super(capacity);
         this.capacity = capacity;

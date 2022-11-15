@@ -1,5 +1,6 @@
 package com.norkts.dacal.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import com.norkts.dacal.util.WindowQueue;
 import lombok.Getter;
@@ -70,10 +71,12 @@ public class GamblingData {
             summaryHistorys.add(getSummary());
         }
 
+        @JsonIgnore
         public String getSummary(){
             return g100Num.get() + "-" + g10Num.get() + "-" + g5Num.get() + "-" + g2Num.get();
         }
 
+        @JsonIgnore
         public String getLastGiftTime(){
             long lastTime = Lists.newArrayList(lastG2Time,lastG5Time,lastG10Time).stream()
                     .max(Long::compare)
@@ -87,6 +90,7 @@ public class GamblingData {
             return String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
         }
 
+        @JsonIgnore
         public String getG2Count(){
             return String.valueOf(Math.min(g2AfterG5Num.get(), g2AfterG10Num.get()));
         }
@@ -167,14 +171,17 @@ public class GamblingData {
             }
         }
 
+        @JsonIgnore
         public String getSummary(){
             return g2aftertG10+"-"+g1afterbG10;
         }
 
+        @JsonIgnore
         public String getLastG10Time(){
             return getLastbG10Time() + "," + getLasttG10Time();
         }
 
+        @JsonIgnore
         private String getLastbG10Time(){
             long lastTime = lastbG10Time;
             if(lastTime < 1){
@@ -185,6 +192,7 @@ public class GamblingData {
             return "b"+String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
         }
 
+        @JsonIgnore
         private String getLasttG10Time(){
             long lastTime = lasttG10Time;
             if(lastTime < 1){
@@ -267,10 +275,12 @@ public class GamblingData {
             yuanYangSummaryHistorys.add(getYuanYangPeriod());
         }
 
+        @JsonIgnore
         public String getBigCardSummary(){
             return g10Num.get() + "-" + g3Num.get();
         }
 
+        @JsonIgnore
         public String getYuanYangTime(){
             long lastTime = lastG5time;
             if(lastTime < 1){
@@ -281,6 +291,7 @@ public class GamblingData {
             return String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
         }
 
+        @JsonIgnore
         public String getYuanYangPeriod(){
 
             if(windowQueue.size() < 1){

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.common.collect.Maps;
 import com.norkts.dacal.domain.Config;
+import com.norkts.dacal.domain.GamblingData;
 import com.norkts.dacal.types.Constants;
 
 import java.lang.reflect.Field;
@@ -22,6 +23,7 @@ public class CommonUtil {
         try {
             return mapper.readValue(content, mapper.getTypeFactory().constructType(clazz));
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -30,6 +32,7 @@ public class CommonUtil {
         try {
             return mapper.readValue(content, mapper.getTypeFactory().constructParametricType(List.class, clazz));
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -127,14 +130,10 @@ public class CommonUtil {
     }
 
     public static void main(String[] args) {
-        Config config = new Config();
-        Map<String, Object> configMap = Maps.newHashMap();
-        configMap.put("key", Constants.GAMBLING_DATA_KEY);
-        configMap.put("value", "{}");
-        configMap.put("gmt_modified", System.currentTimeMillis());
-        configMap.put("gmt_create", System.currentTimeMillis());
 
+        GamblingData g = pasreObject("{\"rollSummary\":{\"summaryHistorys\":[],\"g2Num\":0,\"g5Num\":0,\"g10Num\":2,\"g100Num\":0,\"g2AfterG5Num\":0,\"g2AfterG10Num\":0,\"g5AfterG10Num\":0,\"g10AfterG100Num\":2,\"lastG2Time\":0,\"lastG5Time\":0,\"lastG10Time\":1668508623956,\"lastG100Time\":0,\"summary\":\"0-2-0-0\",\"g2Count\":\"0\",\"lastGiftTime\":\"00:56\"},\"planetSummary\":{\"g1Num\":0,\"g2Num\":0,\"g10Num\":0,\"mg10Num\":0,\"tg10Num\":0,\"bg10Num\":0,\"g1afterG2\":0,\"g1afterbG10\":0,\"g2aftertG10\":0,\"lastG1Time\":0,\"lastG2Time\":0,\"lastG10Time\":\"00:00,00:00\",\"lastbG10Time\":0,\"lasttG10Time\":0,\"lastmG10Time\":0,\"summary\":\"0-0\"},\"cardSummary\":{\"g3Num\":0,\"g10Num\":0,\"g50Num\":0,\"lastG3Time\":0,\"lastG10Time\":0,\"lastG50Time\":0,\"lastG5time\":0,\"g5TimePeriod\":0,\"bigCardSummaryHistorys\":[],\"yuanYangSummaryHistorys\":[],\"yuanYangPeriod\":\"00:00\",\"yuanYangTime\":\"00:00\",\"bigCardSummary\":\"0-0\"}}"
+                ,GamblingData.class);
 
-        System.out.println(toJSONString(dbMap2Object(configMap,config)));
+        System.out.println(toJSONString(g));
     }
 }

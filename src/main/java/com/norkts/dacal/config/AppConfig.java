@@ -34,15 +34,15 @@ public class AppConfig {
 
         List<Map<String,Object>> rows = commonMapper.queryDataByWhere("GiftType", "1=1", 0L, 200L);
 
-        if(!CollectionUtils.isEmpty(rows)){
+        if(CollectionUtils.isEmpty(rows)){
             return giftTypeMap;
         }
 
         rows.forEach(row -> {
 
-            GiftType giftType = new GiftType();
+            GiftType giftType = CommonUtil.dbMap2Object(row, new GiftType());
 
-            giftTypeMap.put((String)row.get("giftName"), CommonUtil.dbMap2Object(row,giftType));
+            giftTypeMap.put(giftType.getGiftName(), CommonUtil.dbMap2Object(row, giftType));
         });
 
         return giftTypeMap;
