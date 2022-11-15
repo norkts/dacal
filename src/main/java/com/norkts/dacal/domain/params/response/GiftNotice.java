@@ -1,6 +1,7 @@
 package com.norkts.dacal.domain.params.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.norkts.dacal.domain.GamblingData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,29 +9,27 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class GiftNotice {
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
-    private Date lastG2Date;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
-    private Date lastG5Date;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
-    private Date lastG10Date;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
-    private Date lastG100Date;
+    private String roll2Count;
+    private String rollSummaryText;
+    private String roll2TimeText;
+    private String planetSummaryText;
+    private String curTimeText;
+    private String bigCardSumText;
+    private String yuanYangTimeText;
+    private String yuanYangPeriodText;
 
-    private int g2NumAfterLastG5;
-    private int g2NumAfterLastG10;
-    private int g5NumAfterLastG10;
-    private int g10NumAfterLastG100;
+    private List<String> yuanYangPeriodTexts;
 
-    private String g100Sumary;
+    private List<String> rollSummaryTexts;
+
+    private List<String> bigCardSumTexts;
+
+    private GamblingData oriGamblingData;
 }

@@ -2,7 +2,10 @@ package com.norkts.dacal.domain;
 
 import com.google.common.collect.Lists;
 import com.norkts.dacal.util.WindowQueue;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GamblingData {
@@ -12,6 +15,10 @@ public class GamblingData {
     public CardSummary cardSummary = new CardSummary();
 
     public static class RollSummary{
+
+        @Getter
+        private WindowQueue<String> summaryHistorys = new WindowQueue<>(20);
+
         public AtomicInteger g2Num = new AtomicInteger(0);
         public AtomicInteger g5Num = new AtomicInteger(0);
         public AtomicInteger g10Num = new AtomicInteger(0);
@@ -59,6 +66,8 @@ public class GamblingData {
             g10Num.set(0);
 
             g10AfterG100Num.set(0);
+
+            summaryHistorys.add(getSummary());
         }
 
         public String getSummary(){
@@ -220,6 +229,12 @@ public class GamblingData {
 
         private final WindowQueue<Long> windowQueue = new WindowQueue<>(5);
 
+        @Getter
+        private WindowQueue<String> bigCardSummaryHistorys = new WindowQueue<>(20);
+
+        @Getter
+        private WindowQueue<String> yuanYangSummaryHistorys = new WindowQueue<>(20);
+
         public void onG3(){
             g3Num.incrementAndGet();
             lastG3Time = System.currentTimeMillis();
@@ -235,6 +250,8 @@ public class GamblingData {
             g3Num.set(0);
             g10Num.set(0);
             lastG50Time = System.currentTimeMillis();
+
+            bigCardSummaryHistorys.add(getBigCardSummary());
         }
 
         public void onG5(){
@@ -247,6 +264,7 @@ public class GamblingData {
             }
 
             lastG5time = System.currentTimeMillis();
+            yuanYangSummaryHistorys.add(getYuanYangPeriod());
         }
 
         public String getBigCardSummary(){
