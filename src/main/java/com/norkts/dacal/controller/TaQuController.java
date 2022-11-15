@@ -64,6 +64,8 @@ public class TaQuController {
 
             dealHLMP(giftMessage);
             dealZZMP(giftMessage);
+
+            dealMH(giftMessage);
         }
 
         return ResultDTO.<GiftNotice>builder()
@@ -215,6 +217,38 @@ public class TaQuController {
                         .msg(gamblingData.cardSummary.getYuanYangPeriod())
                         .platform(PlatformEnum.TAQU.getCode())
                         .scenne("欢乐魔牌-5.0时间间隔")
+                        .build()));
+            }
+        }
+    }
+
+    /**
+     * 魔盒
+     * @param giftMessage
+     */
+    public void dealMH(GiftMessage giftMessage){
+        GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+        if(giftMessage.getScene().contains(GiftSceneEnum.MH.getDesc())){
+
+            if(giftType.getValue() == 20){
+                gamblingData.moheSummary.onG02();
+            }
+
+            if(giftType.getValue() == 50){
+                gamblingData.moheSummary.onG05();
+            }
+
+            if(giftType.getValue() == 100){
+                gamblingData.moheSummary.onG1();
+            }
+
+            if(giftType.getValue() == 500){
+                gamblingData.moheSummary.onG5();
+                commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
+                        .time(giftMessage.getTime())
+                        .msg(gamblingData.moheSummary.getSummary())
+                        .platform(PlatformEnum.TAQU.getCode())
+                        .scenne("魔盒5.0")
                         .build()));
             }
         }

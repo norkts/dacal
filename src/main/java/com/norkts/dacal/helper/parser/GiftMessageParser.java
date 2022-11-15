@@ -1,11 +1,13 @@
 package com.norkts.dacal.helper.parser;
 
+import com.google.common.collect.Lists;
 import com.norkts.dacal.domain.GiftMessage;
 import com.norkts.dacal.domain.GiftType;
 import com.norkts.dacal.domain.params.request.MessageDTO;
 import com.norkts.dacal.types.PlatformEnum;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,8 @@ public class GiftMessageParser implements IGiftParser{
     public static Pattern PLANET_REG_EXP = Pattern.compile("^(.+)在(.+)寻宝获得(.+)$");
 
     public static Pattern CARD_REG_EXP = Pattern.compile("^(.+)在(.+)中获得(.+?),.*$");
+
+    private List<IGiftParser> parsers = Lists.newArrayList(new MoheMessageParser());
 
     @Override
     public GiftMessage parse(MessageDTO messageDTO) {
@@ -31,7 +35,9 @@ public class GiftMessageParser implements IGiftParser{
                 matcher = CARD_REG_EXP.matcher(text);
 
                 if(!matcher.find()){
-                    return null;
+                    for(IGiftParser parser : parsers){
+                        return parser.parse(messageDTO);
+                    }
                 }
             }
         }

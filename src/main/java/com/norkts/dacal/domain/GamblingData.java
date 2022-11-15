@@ -14,6 +14,8 @@ public class GamblingData {
     public RollSummary rollSummary = new RollSummary();
     public PlanetSummary planetSummary = new PlanetSummary();
     public CardSummary cardSummary = new CardSummary();
+    public MoheSummary moheSummary = new MoheSummary();
+
 
     public static class RollSummary{
 
@@ -316,6 +318,40 @@ public class GamblingData {
             lastG10Time = 0;
             lastG50Time = 0;
             windowQueue.clear();
+        }
+    }
+
+    public static class MoheSummary{
+        public AtomicInteger g02Num = new AtomicInteger(0);
+        public AtomicInteger g05Num = new AtomicInteger(0);
+        public AtomicInteger g1Num = new AtomicInteger(0);
+        public AtomicInteger g5Num = new AtomicInteger(0);
+
+        @Getter
+        private WindowQueue<String> meheSummaryHistory = new WindowQueue<>();
+        public void onG02(){
+            g02Num.incrementAndGet();
+        }
+
+        public void onG05(){
+            g05Num.incrementAndGet();
+        }
+
+        public void onG1(){
+            g1Num.incrementAndGet();
+        }
+
+        public void onG5(){
+            g5Num.incrementAndGet();
+            meheSummaryHistory.add(getSummary());
+
+            g02Num.set(0);
+            g05Num.set(0);
+            g1Num.set(0);
+        }
+
+        public String getSummary(){
+            return g5Num.get()+"-" + g1Num.get() + "-" + g05Num.get() + "-" + g02Num.get();
         }
     }
 }

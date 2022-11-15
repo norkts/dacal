@@ -24,12 +24,16 @@ public class GiftNotice {
     private String bigCardSumText;
     private String yuanYangTimeText;
     private String yuanYangPeriodText;
+    private String moheSummaryText;
+
 
     private List<String> yuanYangPeriodTexts;
 
     private List<String> rollSummaryTexts;
 
     private List<String> bigCardSumTexts;
+
+    private List<String> moheSummaryTexts;
 
     private GamblingData oriGamblingData;
 }
