@@ -58,9 +58,10 @@ public class GamblingData {
         }
 
         public void onG100(){
+
             lastG100Time = System.currentTimeMillis();
             g100Num.incrementAndGet();
-
+            summaryHistorys.add(getSummary());
 
             g2Num.set(0);
             g5Num.set(0);
@@ -68,7 +69,6 @@ public class GamblingData {
 
             g10AfterG100Num.set(0);
 
-            summaryHistorys.add(getSummary());
         }
 
         @JsonIgnore
@@ -255,11 +255,11 @@ public class GamblingData {
 
         public void onG50(){
             g50Num.incrementAndGet();
+            bigCardSummaryHistorys.add(getBigCardSummary());
+
             g3Num.set(0);
             g10Num.set(0);
             lastG50Time = System.currentTimeMillis();
-
-            bigCardSummaryHistorys.add(getBigCardSummary());
         }
 
         public void onG5(){
