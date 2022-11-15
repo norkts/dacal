@@ -258,4 +258,14 @@ public class TaQuController {
 
         return ResultDTO.<Void>builder().success(true).build();
     }
+
+    @RequestMapping(value = "/db/query", method = RequestMethod.GET)
+    public ResultDTO<List<Map<String, Object>>> dbQuery(@RequestParam("table") String table, @RequestParam("where") String where
+            , @RequestParam("start") Long start, @RequestParam("limit") Long limit){
+
+        List<Map<String, Object>> rows = commonMapper.queryDataByWhere(table, Optional.ofNullable(where).orElse("1=1"), Optional.ofNullable(start).orElse(0L)
+                , Optional.ofNullable(limit).orElse(1000L));
+
+        return ResultDTO.<List<Map<String, Object>>>builder().success(true).data(rows).build();
+    }
 }
