@@ -194,7 +194,7 @@ public class TaQuController {
      */
     public void dealHLMP(GiftMessage giftMessage){
         GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
-        if(GiftSceneEnum.YLC.getDesc().equals(giftMessage.getScene())){
+        if(GiftSceneEnum.HLMP.getDesc().equals(giftMessage.getScene())){
             if(giftType.getValue() == 500){
                 gamblingData.cardSummary.onG5();
                 commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
