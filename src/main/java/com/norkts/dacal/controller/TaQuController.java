@@ -59,15 +59,28 @@ public class TaQuController {
             dealYLC(giftMessage);
 
             dealMWX(giftMessage);
-            dealMWX(giftMessage);
+            dealTWX(giftMessage);
             dealBJX(giftMessage);
 
             dealHLMP(giftMessage);
             dealZZMP(giftMessage);
         }
 
-        return ResultDTO
-                .<GiftNotice>builder()
+        return ResultDTO.<GiftNotice>builder()
+                .success(true)
+                .data(GiftNotice.builder()
+                        .oriGamblingData(gamblingData)
+                        .rollSummaryText(gamblingData.rollSummary.getSummary())
+                        .rollSummaryTexts(gamblingData.rollSummary.getSummaryHistorys().getItemsAsList())
+                        .roll2Count(gamblingData.rollSummary.getG2Count())
+                        .roll2TimeText(gamblingData.rollSummary.getLastGiftTime())
+                        .planetSummaryText(gamblingData.planetSummary.getSummary())
+                        .yuanYangTimeText(gamblingData.cardSummary.getYuanYangTime())
+                        .yuanYangPeriodText(gamblingData.cardSummary.getYuanYangPeriod())
+                        .yuanYangPeriodTexts(gamblingData.cardSummary.getYuanYangSummaryHistorys().getItemsAsList())
+                        .bigCardSumText(gamblingData.cardSummary.getBigCardSummary())
+                        .bigCardSumTexts(gamblingData.cardSummary.getBigCardSummaryHistorys().getItemsAsList())
+                        .build())
                 .build();
     }
 
