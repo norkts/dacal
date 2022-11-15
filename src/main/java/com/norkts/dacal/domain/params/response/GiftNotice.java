@@ -1,4 +1,4 @@
-package com.norkts.dacal.domain;
+package com.norkts.dacal.domain.params.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

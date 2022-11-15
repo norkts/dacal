@@ -1,169 +1,247 @@
 package com.norkts.dacal.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.norkts.dacal.domain.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.norkts.dacal.domain.params.request.MessageDTO;
+import com.norkts.dacal.domain.params.request.RawMsgData;
+import com.norkts.dacal.domain.params.response.GiftNotice;
+import com.norkts.dacal.domain.params.response.ResultDTO;
+import com.norkts.dacal.helper.parser.IGiftParser;
+import com.norkts.dacal.types.GiftSceneEnum;
+import com.norkts.dacal.types.PlatformEnum;
+import com.norkts.dacal.util.CommonUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
+import com.norkts.dacal.db.dao.CommonMapper;
 
+import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 public class TaQuController {
 
-    private List<GiftMessage> giftMessages = Lists.newArrayList();
+    @Resource
+    private GamblingData gamblingData;
 
-    private Date lastG5 = null;
-    private Date lastG2 = null;
-    private Date lastG10 = null;
-    private Date lastG100 = null;
+    @Resource
+    private IGiftParser giftParser;
 
-    private AtomicInteger g2NumAfterLastG5 = new AtomicInteger(0);
-    private AtomicInteger g2NumAfterLastG10 = new AtomicInteger(0);
-    private AtomicInteger g5NumAfterLastG10 = new AtomicInteger(0);
-    private AtomicInteger g10NumAfterLastG100 = new AtomicInteger(0);
-    private GfCounter g100Counter = new GfCounter();
+    @Resource
+    private Map<String, GiftType> giftTypeMap;
 
+    @Resource
+    private CommonMapper commonMapper;
 
-    private String g2Name = "糖果摩天轮";
-
-    private String g5Name = "云端之梦";
-
-    private String g10Name = "他趣嘉年华";
-
-    private String g100Name = "世纪婚礼";
-
-    @RequestMapping(value = "/msg/gift", method = RequestMethod.POST)
+    @RequestMapping(value = "/gift/msg", method = RequestMethod.POST)
     public ResultDTO<GiftNotice> recieveGiftMessage(@RequestBody List<MessageDTO> msgs){
-        List<GiftMessage> curGifts = convertGifts(msgs);
 
-        curGifts.stream().sorted(Comparator.comparing(GiftMessage::getNo)).forEach((msg) -> {
-            if(Objects.equals(g2Name, msg.getGiftName())){
+        for(MessageDTO messageDTO : msgs){
 
-                //2分钟以上可能有2.0
-                //4分钟以上可能有8.0
-                lastG2 = msg.getTime();
+            commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
+                            .platform(PlatformEnum.TAQU.getCode())
+                            .msg(messageDTO.getMsg())
+                            .scenne(messageDTO.getType())
+                            .time(messageDTO.getTime())
+                    .build()));
 
-                g100Counter.getG2Counter().addAndGet(msg.getNum());
+            GiftMessage giftMessage = giftParser.parse(messageDTO);
 
-                //超过4个可能有2.0
-                //超过8个可能有10.0
-                int num =  g2NumAfterLastG5.addAndGet(msg.getNum());
+            commonMapper.insert("GiftMessage", CommonUtil.object2DbMap(giftMessage));
 
-                g2NumAfterLastG10.addAndGet(msg.getNum());
+            GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+
+            if(giftType == null){
+                continue;
             }
 
-            if(Objects.equals(g5Name, msg.getGiftName())){
-                lastG5 = msg.getTime();
-                g2NumAfterLastG5.set(0);
-                g5NumAfterLastG10.addAndGet(msg.getNum());
-                //超过4个可能有10.0
-                int num =  g100Counter.getG5Counter().addAndGet(msg.getNum());
-            }
+            dealYLC(giftMessage);
 
-            if(Objects.equals(g10Name, msg.getGiftName())){
-                lastG10 = msg.getTime();
+            dealMWX(giftMessage);
+            dealMWX(giftMessage);
+            dealBJX(giftMessage);
 
-                g2NumAfterLastG10.set(0);
-                g5NumAfterLastG10.set(0);
-                g10NumAfterLastG100.addAndGet(msg.getNum());
-                g100Counter.getG10Counter().addAndGet(msg.getNum());
-            }
-
-            if(Objects.equals(g100Name, msg.getGiftName())){
-                lastG100 = msg.getTime();
-                g100Counter.clearG2510();
-
-                g100Counter.getG100Counter().addAndGet(msg.getNum());
-            }
-        });
-
-        return ResultDTO.<GiftNotice>builder()
-                .success(true)
-                .data(GiftNotice.builder()
-                        .lastG5Date(lastG5)
-                        .lastG2Date(lastG2)
-                        .lastG10Date(lastG10)
-                        .lastG100Date(lastG100)
-                        .g2NumAfterLastG5(g2NumAfterLastG5.get())
-                        .g2NumAfterLastG10(g2NumAfterLastG10.get())
-                        .g5NumAfterLastG10(g5NumAfterLastG10.get())
-                        .g10NumAfterLastG100(g10NumAfterLastG100.get())
-                        .g100Sumary(g100Counter.toString())
-                        .build())
-                .build();
-    }
-
-    @RequestMapping(value = "/gift/summary")
-    public ResultDTO<GiftNotice> getGiftNotice(){
-        return ResultDTO.<GiftNotice>builder()
-                .success(true)
-                .data(GiftNotice.builder()
-                        .lastG5Date(lastG5)
-                        .lastG2Date(lastG2)
-                        .lastG10Date(lastG10)
-                        .lastG100Date(lastG100)
-                        .g2NumAfterLastG5(g2NumAfterLastG5.get())
-                        .g2NumAfterLastG10(g2NumAfterLastG10.get())
-                        .g5NumAfterLastG10(g5NumAfterLastG10.get())
-                        .g10NumAfterLastG100(g10NumAfterLastG100.get())
-                        .g100Sumary(g100Counter.toString())
-                        .build())
-                .build();
-    }
-
-    public static Pattern LE_CHANG_REG_EXP = Pattern.compile("^(.+)\\s+在(.+)中获得\\s+(.+?)[,，].*$");
-
-    public static List<GiftMessage> convertGifts(List<MessageDTO> msgs){
-
-        List<GiftMessage> gifts = new ArrayList<>();
-        for(MessageDTO nodeInfo : msgs){
-            if(nodeInfo.getMsg() != null){
-                String msg = nodeInfo.getMsg();
-                //寻*** 在游乐场中获得 糖果摩天轮，恭喜！我也要玩>>
-                Matcher matcher = LE_CHANG_REG_EXP.matcher(msg);
-                if(matcher.matches()){
-                    GiftMessage giftMessage = new GiftMessage();
-                    giftMessage.setUser(matcher.group(1));
-                    giftMessage.setGiftType(matcher.group(2));
-
-                    String[] splits = matcher.group(3).split("x");
-                    giftMessage.setGiftName(splits[0]);
-                    if(splits.length > 1){
-                        giftMessage.setNum(Integer.parseInt(splits[1]));
-                    }else{
-                        giftMessage.setNum(1);
-                    }
-
-
-                    giftMessage.setTime(nodeInfo.getTime());
-                    giftMessage.setNo(nodeInfo.getSn());
-
-                    //TODO 判断重复
-                    gifts.add(giftMessage);
-                }
-            }
+            dealHLMP(giftMessage);
+            dealZZMP(giftMessage);
         }
 
-        return gifts;
+        return ResultDTO
+                .<GiftNotice>builder()
+                .build();
     }
 
+    /**
+     * 游乐场
+     * @param giftMessage
+     */
+    public void dealYLC(GiftMessage giftMessage){
+        GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+        if(GiftSceneEnum.YLC.getDesc().equals(giftMessage.getScene())){
+            if(giftType.getValue() == 200){
+                gamblingData.rollSummary.onG2();
+            }
+
+            if(giftType.getValue() == 500){
+                gamblingData.rollSummary.onG2();
+            }
+
+            if(giftType.getValue() == 1000){
+                gamblingData.rollSummary.onG2();
+            }
+
+            if(giftType.getValue() == 10000){
+                gamblingData.rollSummary.onG100();
+                commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
+                                .time(giftMessage.getTime())
+                                .msg(gamblingData.rollSummary.getSummary())
+                                .platform(PlatformEnum.TAQU.getCode())
+                                .scenne("游乐场-100.0")
+                        .build()));
+            }
+        }
+    }
+
+    /**
+     * 冥王星
+     * @param giftMessage
+     */
+    public void dealMWX(GiftMessage giftMessage){
+        GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+        if(GiftSceneEnum.MWX.getDesc().equals(giftMessage.getScene())){
+            if(giftType.getValue() == 1000){
+                gamblingData.planetSummary.onG10("m");
+            }
+        }
+    }
+
+    /**
+     * 天王星
+     * @param giftMessage
+     */
+    public void dealTWX(GiftMessage giftMessage){
+        GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+        if(GiftSceneEnum.TWX.getDesc().equals(giftMessage.getScene())){
+            if(giftType.getValue() == 1000){
+                gamblingData.planetSummary.onG10("t");
+                commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
+                        .time(giftMessage.getTime())
+                        .msg(gamblingData.planetSummary.getSummary())
+                        .platform(PlatformEnum.TAQU.getCode())
+                        .scenne("天王星-10.0")
+                        .build()));
+            }
+
+            if(giftType.getValue() == 200){
+                gamblingData.planetSummary.onG2();
+            }
+        }
+    }
+
+    /**
+     * 北极星
+     * @param giftMessage
+     */
+    public void dealBJX(GiftMessage giftMessage){
+        GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+        if(GiftSceneEnum.BJX.getDesc().equals(giftMessage.getScene())){
+            if(giftType.getValue() == 1000){
+                gamblingData.planetSummary.onG10("b");
+                commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
+                        .time(giftMessage.getTime())
+                        .msg(gamblingData.planetSummary.getSummary())
+                        .platform(PlatformEnum.TAQU.getCode())
+                        .scenne("北极星-10.0")
+                        .build()));
+            }
+
+            if(giftType.getValue() == 100){
+                gamblingData.planetSummary.onG1();
+            }
+        }
+    }
+
+    /**
+     * 至尊魔牌
+     * @param giftMessage
+     */
+    public void dealZZMP(GiftMessage giftMessage){
+        GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+        if(GiftSceneEnum.ZZMP.getDesc().equals(giftMessage.getScene())){
+            if(giftType.getValue() == 334){
+                gamblingData.cardSummary.onG3();
+            }
+
+            if(giftType.getValue() == 1000){
+                gamblingData.cardSummary.onG10();
+            }
+
+            if(giftType.getValue() == 5000){
+                gamblingData.cardSummary.onG50();
+                commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
+                        .time(giftMessage.getTime())
+                        .msg(gamblingData.planetSummary.getSummary())
+                        .platform(PlatformEnum.TAQU.getCode())
+                        .scenne("至尊魔牌-50.0")
+                        .build()));
+            }
+        }
+    }
+
+    /**
+     * 欢乐魔牌
+     * @param giftMessage
+     */
+    public void dealHLMP(GiftMessage giftMessage){
+        GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
+        if(GiftSceneEnum.YLC.getDesc().equals(giftMessage.getScene())){
+            if(giftType.getValue() == 500){
+                gamblingData.cardSummary.onG5();
+                commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
+                        .time(giftMessage.getTime())
+                        .msg(gamblingData.cardSummary.getYuanYangPeriod())
+                        .platform(PlatformEnum.TAQU.getCode())
+                        .scenne("欢乐魔牌-5.0时间间隔")
+                        .build()));
+            }
+        }
+    }
+
+
+    @RequestMapping(value = "/gift/result")
+    public ResultDTO<GamblingData> getGiftNotice(){
+        return ResultDTO.<GamblingData>builder()
+                .success(true)
+                .data(gamblingData)
+                .build();
+    }
+
+
     @RequestMapping(value = "/gift/clear", method = RequestMethod.GET)
-    public ResultDTO<Void> clear(){
-        lastG2 = null;
-        lastG5 = null;
-        lastG10 = null;
-        lastG100 = null;
+    public ResultDTO<Void> clear(@Param("type") String type){
 
-        g2NumAfterLastG5.set(0);
-        g2NumAfterLastG10.set(0);
-        g5NumAfterLastG10.set(0);
-        g10NumAfterLastG100.set(0);
+        if(Objects.equals(type, "YLC")){
+            gamblingData.rollSummary.clear();
+        }
 
-        g100Counter.clearAll();
+        if(Objects.equals(type, "XJMH")){
+            gamblingData.planetSummary.clear();
+        }
+
+        if(Objects.equals(type, "MP")){
+            gamblingData.cardSummary.clear();
+        }
+
+        return ResultDTO.<Void>builder().success(true).build();
+    }
+
+    @RequestMapping(value = "/gift/type/edit", method = RequestMethod.POST)
+    public ResultDTO<Void> giftEdit(@RequestBody List<GiftType> giftTypes){
+
+        for(GiftType giftType : giftTypes){
+            giftTypeMap.put(giftType.getGiftName(), giftType);
+
+            commonMapper.insert("GiftType", CommonUtil.object2DbMap(giftType));
+        }
+
         return ResultDTO.<Void>builder().success(true).build();
     }
 }

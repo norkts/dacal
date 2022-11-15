@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.norkts.dacal.db.dao.CommonMapper">
+    <insert id="insert">
+        REPLACE into ${table}(
+        <foreach collection="dataInfo.keys" item="keyName" separator=",">
+            ${keyName}
+        </foreach>
+        ) values(
+        <foreach collection="dataInfo.values" item="value" separator=",">
+            #{value}
+        </foreach>
+        )
+    </insert>
+
+    <update id="deleteByIds">
+        DELETE FROM ${table}
+        where ${entityIdKey}
+        IN
+        <foreach collection="ids" index="key" item="value" separator="," open="(" close=")">
+            #{value}
+        </foreach>
+    </update>
+
+    <select id="queryDataByWhere" resultType="java.util.HashMap">
+    SELECT * FROM ${table}
+    where ${where} LIMIT #{start},#{limit}
+    </select>
+
+    <update id="update">
+        update ${table} set
+        <foreach collection="dataInfo" index="key" item="value" separator=",">
+            ${key} = #{value}
+        </foreach>
+        where ${entityIdKey}=#{entityIdValue}
+    </update>
+</mapper>

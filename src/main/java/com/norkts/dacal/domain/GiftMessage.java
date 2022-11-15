@@ -18,27 +18,25 @@ import java.util.Objects;
 public class GiftMessage implements Serializable {
 
     private static final long serialVersionUID = -5108163803959638573L;
-    private String no;
+
+    private Integer id;
 
     private String user;
 
     private Date time;
 
-    private String giftType;
+    private String scene;
 
     private String giftName;
 
     private Integer num;
 
+    private int platform;
+
     @Override
     public String toString(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return  format.format(time) + " " + user + " 在" + giftType + "中获得了" + giftName + "x" + num;
-    }
-
-    @Override
-    public int hashCode(){
-        return no.hashCode();
+        return  format.format(time) + " " + user + " 在" + scene + "中获得了" + giftName + "x" + num;
     }
 
     public boolean equals(GiftMessage giftMessage){
@@ -47,10 +45,9 @@ public class GiftMessage implements Serializable {
             return true;
         }
 
-        return Objects.equals(no, giftMessage.no)
-                && Objects.equals(user, giftMessage.user)
+        return Objects.equals(user, giftMessage.user)
                 && Objects.equals(time, giftMessage.time)
-                && Objects.equals(giftType, giftMessage.giftType)
+                && Objects.equals(scene, giftMessage.scene)
                 && Objects.equals(giftName, giftMessage.giftName);
     }
 }

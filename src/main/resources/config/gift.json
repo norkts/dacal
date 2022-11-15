@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "value": 200,
+    "giftName": "梦幻独角兽"
+  },
+  {
+    "id": 2,
+    "value": 500,
+    "giftName": "远洋之旅"
+  },
+  {
+    "id": 3,
+    "value": 10000,
+    "giftName": "世纪婚礼"
+  },
+  {
+    "id": 4,
+    "value": 1000,
+    "giftName": "我们的爱"
+  },
+  {
+    "id": 5,
+    "value": 1000,
+    "giftName": "他趣嘉年华"
+  },
+  {
+    "id": 6,
+    "value": 334,
+    "giftName": "少女星愿"
+  },
+  {
+    "id": 7,
+    "value": 500,
+    "giftName": "云端之梦"
+  },
+  {
+    "id": 8,
+    "value": 100,
+    "giftName": "烂漫云端"
+  },
+  {
+    "id": 9,
+    "value": 1000,
+    "giftName": "做我的猫"
+  },
+  {
+    "id": 10,
+    "value": 1000,
+    "giftName": "时空之门"
+  },
+  {
+    "id": 11,
+    "value": 200,
+    "giftName": "糖果摩天轮"
+  },
+  {
+    "id": 12,
+    "value": 5000,
+    "giftName": "流星光遇"
+  }
+]
