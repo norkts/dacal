@@ -110,10 +110,10 @@ public class GamblingData implements Serializable {
             g5AfterG10Num.set(0);
             g10AfterG100Num.set(0);
 
-            lastG10Time = 0;
-            lastG100Time = 0;
-            lastG2Time = 0;
-            lastG5Time = 0;
+            lastG10Time = System.currentTimeMillis();
+            lastG100Time = System.currentTimeMillis();
+            lastG2Time = System.currentTimeMillis();
+            lastG5Time = System.currentTimeMillis();
         }
 
 
@@ -220,12 +220,12 @@ public class GamblingData implements Serializable {
             tg10Num.set(0);
             mg10Num.set(0);
 
-            lastG1Time = 0;
-            lastG2Time = 0;
-            lastG10Time = 0;
-            lastbG10Time = 0;
-            lasttG10Time = 0;
-            lastmG10Time = 0;
+            lastG1Time = System.currentTimeMillis();
+            lastG2Time = System.currentTimeMillis();
+            lastG10Time = System.currentTimeMillis();
+            lastbG10Time = System.currentTimeMillis();
+            lasttG10Time = System.currentTimeMillis();
+            lastmG10Time = System.currentTimeMillis();
         }
     }
 
@@ -318,9 +318,10 @@ public class GamblingData implements Serializable {
             g10Num.set(0);
             g50Num.set(0);
 
-            lastG3Time = 0;
-            lastG10Time = 0;
-            lastG50Time = 0;
+            lastG3Time = System.currentTimeMillis();
+            lastG10Time = System.currentTimeMillis();
+            lastG50Time = System.currentTimeMillis();
+            lastG5time = System.currentTimeMillis();
             windowQueue.clear();
         }
     }
