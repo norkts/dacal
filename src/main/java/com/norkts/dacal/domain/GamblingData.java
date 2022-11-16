@@ -301,7 +301,7 @@ public class GamblingData {
 
             long avgPeriod = 0;
 
-            for(Long p : windowQueue.getItemsAsList()){
+            for(Long p : windowQueue.getItems()){
                 avgPeriod += p;
             }
 

@@ -1,6 +1,7 @@
 package com.norkts.dacal.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.common.collect.Maps;
@@ -18,7 +19,9 @@ import java.util.stream.Collectors;
 
 public class CommonUtil {
     private static ObjectMapper mapper = new ObjectMapper();
-
+    static {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
     public static <T> T pasreObject(String content, Class<T> clazz){
         try {
             return mapper.readValue(content, mapper.getTypeFactory().constructType(clazz));

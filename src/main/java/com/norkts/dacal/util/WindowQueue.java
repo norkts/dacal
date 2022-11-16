@@ -1,6 +1,9 @@
 package com.norkts.dacal.util;
 
 
+import com.google.common.collect.Lists;
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +17,9 @@ public class WindowQueue<T> extends ArrayBlockingQueue<T> {
     private static final long serialVersionUID = -1818403798613768240L;
 
     private final int capacity;
+    @Getter
+    private List<T> items = Lists.newArrayList();
+
     public WindowQueue(){
         this(16);
     }
@@ -28,7 +34,10 @@ public class WindowQueue<T> extends ArrayBlockingQueue<T> {
         if(size() >= capacity){
             poll();
         }
-        return super.add(t);
+        boolean res = super.add(t);
+
+        items = new ArrayList<>(this);
+        return res;
     }
 
     @Override
@@ -41,7 +50,7 @@ public class WindowQueue<T> extends ArrayBlockingQueue<T> {
 
     public List<T> getItemsAsList(){
 
-        return new ArrayList<>(this);
+        return items;
     }
 }
 

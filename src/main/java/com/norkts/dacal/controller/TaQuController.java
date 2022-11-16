@@ -73,15 +73,17 @@ public class TaQuController {
                 .data(GiftNotice.builder()
                         .oriGamblingData(gamblingData)
                         .rollSummaryText(gamblingData.rollSummary.getSummary())
-                        .rollSummaryTexts(gamblingData.rollSummary.getSummaryHistorys().getItemsAsList())
+                        .rollSummaryTexts(gamblingData.rollSummary.getSummaryHistorys().getItems())
                         .roll2Count(gamblingData.rollSummary.getG2Count())
                         .roll2TimeText(gamblingData.rollSummary.getLastGiftTime())
                         .planetSummaryText(gamblingData.planetSummary.getSummary())
                         .yuanYangTimeText(gamblingData.cardSummary.getYuanYangTime())
                         .yuanYangPeriodText(gamblingData.cardSummary.getYuanYangPeriod())
-                        .yuanYangPeriodTexts(gamblingData.cardSummary.getYuanYangSummaryHistorys().getItemsAsList())
+                        .yuanYangPeriodTexts(gamblingData.cardSummary.getYuanYangSummaryHistorys().getItems())
                         .bigCardSumText(gamblingData.cardSummary.getBigCardSummary())
-                        .bigCardSumTexts(gamblingData.cardSummary.getBigCardSummaryHistorys().getItemsAsList())
+                        .bigCardSumTexts(gamblingData.cardSummary.getBigCardSummaryHistorys().getItems())
+                        .moheSummaryText(gamblingData.moheSummary.getSummary())
+                        .moheSummaryTexts(gamblingData.moheSummary.getMeheSummaryHistory().getItems())
                         .build())
                 .build();
     }
@@ -106,13 +108,13 @@ public class TaQuController {
             }
 
             if(giftType.getValue() == 10000){
-                gamblingData.rollSummary.onG100();
                 commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
-                                .time(giftMessage.getTime())
-                                .msg(gamblingData.rollSummary.getSummary())
-                                .platform(PlatformEnum.TAQU.getCode())
-                                .scenne("游乐场-100.0")
+                        .time(giftMessage.getTime())
+                        .msg(gamblingData.rollSummary.getSummary())
+                        .platform(PlatformEnum.TAQU.getCode())
+                        .scenne("游乐场-100.0")
                         .build()));
+                gamblingData.rollSummary.onG100();
             }
         }
     }
@@ -138,13 +140,13 @@ public class TaQuController {
         GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
         if(GiftSceneEnum.TWX.getDesc().equals(giftMessage.getScene())){
             if(giftType.getValue() == 1000){
-                gamblingData.planetSummary.onG10("t");
                 commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
                         .time(giftMessage.getTime())
                         .msg(gamblingData.planetSummary.getSummary())
                         .platform(PlatformEnum.TAQU.getCode())
                         .scenne("天王星-10.0")
                         .build()));
+                gamblingData.planetSummary.onG10("t");
             }
 
             if(giftType.getValue() == 200){
@@ -161,13 +163,13 @@ public class TaQuController {
         GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
         if(GiftSceneEnum.BJX.getDesc().equals(giftMessage.getScene())){
             if(giftType.getValue() == 1000){
-                gamblingData.planetSummary.onG10("b");
                 commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
                         .time(giftMessage.getTime())
                         .msg(gamblingData.planetSummary.getSummary())
                         .platform(PlatformEnum.TAQU.getCode())
                         .scenne("北极星-10.0")
                         .build()));
+                gamblingData.planetSummary.onG10("b");
             }
 
             if(giftType.getValue() == 100){
@@ -192,13 +194,13 @@ public class TaQuController {
             }
 
             if(giftType.getValue() == 5000){
-                gamblingData.cardSummary.onG50();
                 commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
                         .time(giftMessage.getTime())
                         .msg(gamblingData.planetSummary.getSummary())
                         .platform(PlatformEnum.TAQU.getCode())
                         .scenne("至尊魔牌-50.0")
                         .build()));
+                gamblingData.cardSummary.onG50();
             }
         }
     }
@@ -211,13 +213,13 @@ public class TaQuController {
         GiftType giftType = giftTypeMap.get(giftMessage.getGiftName());
         if(GiftSceneEnum.HLMP.getDesc().equals(giftMessage.getScene())){
             if(giftType.getValue() == 500){
-                gamblingData.cardSummary.onG5();
                 commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
                         .time(giftMessage.getTime())
                         .msg(gamblingData.cardSummary.getYuanYangPeriod())
                         .platform(PlatformEnum.TAQU.getCode())
                         .scenne("欢乐魔牌-5.0时间间隔")
                         .build()));
+                gamblingData.cardSummary.onG5();
             }
         }
     }
@@ -262,15 +264,15 @@ public class TaQuController {
                 .data(GiftNotice.builder()
                         .oriGamblingData(gamblingData)
                         .rollSummaryText(gamblingData.rollSummary.getSummary())
-                        .rollSummaryTexts(gamblingData.rollSummary.getSummaryHistorys().getItemsAsList())
+                        .rollSummaryTexts(gamblingData.rollSummary.getSummaryHistorys().getItems())
                         .roll2Count(gamblingData.rollSummary.getG2Count())
                         .roll2TimeText(gamblingData.rollSummary.getLastGiftTime())
                         .planetSummaryText(gamblingData.planetSummary.getSummary())
                         .yuanYangTimeText(gamblingData.cardSummary.getYuanYangTime())
                         .yuanYangPeriodText(gamblingData.cardSummary.getYuanYangPeriod())
-                        .yuanYangPeriodTexts(gamblingData.cardSummary.getYuanYangSummaryHistorys().getItemsAsList())
+                        .yuanYangPeriodTexts(gamblingData.cardSummary.getYuanYangSummaryHistorys().getItems())
                         .bigCardSumText(gamblingData.cardSummary.getBigCardSummary())
-                        .bigCardSumTexts(gamblingData.cardSummary.getBigCardSummaryHistorys().getItemsAsList())
+                        .bigCardSumTexts(gamblingData.cardSummary.getBigCardSummaryHistorys().getItems())
                         .build())
                 .build();
     }
@@ -316,5 +318,13 @@ public class TaQuController {
                 , Optional.ofNullable(limit).orElse(1000L));
 
         return ResultDTO.<List<Map<String, Object>>>builder().success(true).data(rows).build();
+    }
+
+    @RequestMapping(value = "/db/execute", method = RequestMethod.POST)
+    public ResultDTO<Object> dbExecute(@RequestBody String sql){
+
+        Object result = commonMapper.execute(sql);
+
+        return ResultDTO.builder().success(true).data(result).build();
     }
 }
