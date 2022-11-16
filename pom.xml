@@ -71,6 +71,12 @@
             <artifactId>guava</artifactId>
             <version>31.1-jre</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.3.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -123,5 +129,13 @@
             </resource>
         </resources>
     </build>
+
+    <repositories>
+        <repository>
+            <id>aliyunmaven</id>
+            <name>阿里云公共仓库</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
+    </repositories>
 
 </project>

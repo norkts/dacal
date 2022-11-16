@@ -27,9 +27,15 @@ public class GiftDataJob {
     @PostConstruct
     public void init(){
         poolExecutor.scheduleAtFixedRate(() -> {
+
+            String data = CommonUtil.toBinString(gamblingData);
+            if(data == null){
+                return;
+            }
+
             Config config = Config.builder()
                     .key(Constants.GAMBLING_DATA_KEY)
-                    .value(CommonUtil.toJSONString(gamblingData))
+                    .value(data)
                     .gmtCreate(new Date())
                     .gmtModified(new Date())
                     .build();

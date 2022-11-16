@@ -6,19 +6,22 @@ import com.norkts.dacal.util.WindowQueue;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GamblingData {
+public class GamblingData implements Serializable {
 
+    private static final long serialVersionUID = 1788730643656580028L;
     public RollSummary rollSummary = new RollSummary();
     public PlanetSummary planetSummary = new PlanetSummary();
     public CardSummary cardSummary = new CardSummary();
     public MoheSummary moheSummary = new MoheSummary();
 
 
-    public static class RollSummary{
+    public static class RollSummary implements Serializable{
 
+        private static final long serialVersionUID = -4324723246665144397L;
         @Getter
         private WindowQueue<String> summaryHistorys = new WindowQueue<>(20);
 
@@ -32,10 +35,10 @@ public class GamblingData {
         public AtomicInteger g5AfterG10Num = new AtomicInteger(0);
         public AtomicInteger g10AfterG100Num = new AtomicInteger(0);
 
-        public long lastG2Time = 0;
-        public long lastG5Time = 0;
-        public long lastG10Time = 0;
-        public long lastG100Time = 0;
+        public long lastG2Time = System.currentTimeMillis();
+        public long lastG5Time = System.currentTimeMillis();
+        public long lastG10Time = System.currentTimeMillis();
+        public long lastG100Time = System.currentTimeMillis();
 
         public void onG2(){
             lastG2Time = System.currentTimeMillis();
@@ -73,12 +76,11 @@ public class GamblingData {
 
         }
 
-        @JsonIgnore
         public String getSummary(){
             return g100Num.get() + "-" + g10Num.get() + "-" + g5Num.get() + "-" + g2Num.get();
         }
 
-        @JsonIgnore
+
         public String getLastGiftTime(){
             long lastTime = Lists.newArrayList(lastG2Time,lastG5Time,lastG10Time).stream()
                     .max(Long::compare)
@@ -92,8 +94,8 @@ public class GamblingData {
             return String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
         }
 
-        @JsonIgnore
-        public String getG2Count(){
+
+        public String getG2CountText(){
             return String.valueOf(Math.min(g2AfterG5Num.get(), g2AfterG10Num.get()));
         }
 
@@ -117,7 +119,8 @@ public class GamblingData {
 
     }
 
-    public static class PlanetSummary{
+    public static class PlanetSummary  implements Serializable{
+        private static final long serialVersionUID = 8048664744461128010L;
         public AtomicInteger g1Num = new AtomicInteger(0);
         public AtomicInteger g2Num = new AtomicInteger(0);
         public AtomicInteger g10Num = new AtomicInteger(0);
@@ -129,12 +132,12 @@ public class GamblingData {
         public AtomicInteger g1afterbG10 = new AtomicInteger(0);
         public AtomicInteger g2aftertG10 = new AtomicInteger(0);
 
-        public long lastG1Time = 0;
-        public long lastG2Time = 0;
-        public long lastG10Time = 0;
-        public long lastbG10Time = 0;
-        public long lasttG10Time = 0;
-        public long lastmG10Time = 0;
+        public long lastG1Time = System.currentTimeMillis();
+        public long lastG2Time = System.currentTimeMillis();
+        public long lastG10Time = System.currentTimeMillis();
+        public long lastbG10Time = System.currentTimeMillis();
+        public long lasttG10Time = System.currentTimeMillis();
+        public long lastmG10Time = System.currentTimeMillis();
 
         public void onG1(){
             g1Num.incrementAndGet();
@@ -173,29 +176,19 @@ public class GamblingData {
             }
         }
 
-        @JsonIgnore
+
         public String getSummary(){
             return g2aftertG10+"-"+g1afterbG10;
         }
 
-        @JsonIgnore
-        public String getLastG10Time(){
-            return getLastbG10Time() + "," + getLasttG10Time();
+
+        public String getLastG10TimeText(){
+            return getLastbG10TimeText() + "," + getLasttG10TimeText();
         }
 
-        @JsonIgnore
-        private String getLastbG10Time(){
-            long lastTime = lastbG10Time;
-            if(lastTime < 1){
-                return "00:00";
-            }
 
-            long seconds = (System.currentTimeMillis() - lastTime)/1000;
-            return "b"+String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
-        }
 
-        @JsonIgnore
-        private String getLasttG10Time(){
+        private String getLasttG10TimeText(){
             long lastTime = lasttG10Time;
             if(lastTime < 1){
                 lastTime = System.currentTimeMillis();
@@ -203,6 +196,16 @@ public class GamblingData {
 
             long seconds = (System.currentTimeMillis() - lastTime)/1000;
             return String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
+        }
+
+        private String getLastbG10TimeText(){
+            long lastTime = lastbG10Time;
+            if(lastTime < 1){
+                return "00:00";
+            }
+
+            long seconds = (System.currentTimeMillis() - lastTime)/1000;
+            return "b"+String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
         }
 
         public void clear(){
@@ -226,16 +229,17 @@ public class GamblingData {
         }
     }
 
-    public static class CardSummary{
+    public static class CardSummary  implements Serializable{
+        private static final long serialVersionUID = -1569259857311926915L;
         public AtomicInteger g3Num = new AtomicInteger(0);
         public AtomicInteger g10Num = new AtomicInteger(0);
         public AtomicInteger g50Num = new AtomicInteger(0);
 
-        public long lastG3Time = 0;
-        public long lastG10Time = 0;
-        public long lastG50Time = 0;
-        public long lastG5time = 0;
-        public long g5TimePeriod = 0;
+        public long lastG3Time = System.currentTimeMillis();
+        public long lastG10Time = System.currentTimeMillis();
+        public long lastG50Time = System.currentTimeMillis();
+        public long lastG5time = System.currentTimeMillis();
+        public long g5TimePeriod = 15*60*1000;
 
         private final WindowQueue<Long> windowQueue = new WindowQueue<>(5);
 
@@ -281,7 +285,7 @@ public class GamblingData {
             return g10Num.get() + "-" + g3Num.get();
         }
 
-        @JsonIgnore
+
         public String getYuanYangTime(){
             long lastTime = lastG5time;
             if(lastTime < 1){
@@ -292,7 +296,7 @@ public class GamblingData {
             return String.format("%02d", seconds/60) + ":" + String.format("%02d", seconds%60);
         }
 
-        @JsonIgnore
+
         public String getYuanYangPeriod(){
 
             if(windowQueue.size() < 1){
@@ -321,7 +325,8 @@ public class GamblingData {
         }
     }
 
-    public static class MoheSummary{
+    public static class MoheSummary  implements Serializable{
+        private static final long serialVersionUID = -3626602473877186731L;
         public AtomicInteger g02Num = new AtomicInteger(0);
         public AtomicInteger g05Num = new AtomicInteger(0);
         public AtomicInteger g1Num = new AtomicInteger(0);

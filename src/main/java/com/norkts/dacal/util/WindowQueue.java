@@ -3,6 +3,7 @@ package com.norkts.dacal.util;
 
 import com.google.common.collect.Lists;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,8 +17,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class WindowQueue<T> extends ArrayBlockingQueue<T> {
     private static final long serialVersionUID = -1818403798613768240L;
 
-    private final int capacity;
     @Getter
+    @Setter
+    private int capacity;
+
+    @Getter
+    @Setter
     private List<T> items = Lists.newArrayList();
 
     public WindowQueue(){
@@ -46,11 +51,6 @@ public class WindowQueue<T> extends ArrayBlockingQueue<T> {
             add(item);
         }
         return true;
-    }
-
-    public List<T> getItemsAsList(){
-
-        return items;
     }
 }
 

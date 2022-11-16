@@ -9,8 +9,10 @@ import com.norkts.dacal.domain.Config;
 import com.norkts.dacal.domain.GamblingData;
 import com.norkts.dacal.types.Constants;
 
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,7 @@ public class CommonUtil {
     private static ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
     }
     public static <T> T pasreObject(String content, Class<T> clazz){
         try {
@@ -132,11 +135,63 @@ public class CommonUtil {
                 .map(s -> s.substring(0,1).toUpperCase() + s.substring(1)).collect(Collectors.joining());
     }
 
+    public static byte[] toBinByteArr(Object o) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream ots = new ObjectOutputStream(baos);
+        ots.writeObject(o);
+        ots.close();
+
+        return baos.toByteArray();
+    }
+
+    public static String toBinString(Object o) {
+        try {
+            return new String(toBinByteArr(o), StandardCharsets.ISO_8859_1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static <T> T formBinByte(byte[] bytes) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+        T result = (T) ois.readObject();
+        return result;
+    }
+
+    public static <T> T fromBinString(String data){
+
+        if(data == null){
+            return null;
+        }
+
+        try {
+            return formBinByte(data.getBytes(StandardCharsets.ISO_8859_1));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static void main(String[] args) {
 
-        GamblingData g = pasreObject("{\"rollSummary\":{\"summaryHistorys\":[],\"g2Num\":0,\"g5Num\":0,\"g10Num\":2,\"g100Num\":0,\"g2AfterG5Num\":0,\"g2AfterG10Num\":0,\"g5AfterG10Num\":0,\"g10AfterG100Num\":2,\"lastG2Time\":0,\"lastG5Time\":0,\"lastG10Time\":1668508623956,\"lastG100Time\":0,\"summary\":\"0-2-0-0\",\"g2Count\":\"0\",\"lastGiftTime\":\"00:56\"},\"planetSummary\":{\"g1Num\":0,\"g2Num\":0,\"g10Num\":0,\"mg10Num\":0,\"tg10Num\":0,\"bg10Num\":0,\"g1afterG2\":0,\"g1afterbG10\":0,\"g2aftertG10\":0,\"lastG1Time\":0,\"lastG2Time\":0,\"lastG10Time\":\"00:00,00:00\",\"lastbG10Time\":0,\"lasttG10Time\":0,\"lastmG10Time\":0,\"summary\":\"0-0\"},\"cardSummary\":{\"g3Num\":0,\"g10Num\":0,\"g50Num\":0,\"lastG3Time\":0,\"lastG10Time\":0,\"lastG50Time\":0,\"lastG5time\":0,\"g5TimePeriod\":0,\"bigCardSummaryHistorys\":[],\"yuanYangSummaryHistorys\":[],\"yuanYangPeriod\":\"00:00\",\"yuanYangTime\":\"00:00\",\"bigCardSummary\":\"0-0\"}}"
-                ,GamblingData.class);
-
+        GamblingData g = new GamblingData();
+        g.rollSummary.onG100();
+        g.cardSummary.onG50();
+        g.cardSummary.onG5();
         System.out.println(toJSONString(g));
+
+        GamblingData g2 = fromBinString(toBinString(g));
+        if(g2 == null){
+            return;
+        }
+
+        System.out.println(g2.rollSummary.getSummaryHistorys());
+        System.out.println(g2.cardSummary.getYuanYangPeriod());
+
     }
 }
