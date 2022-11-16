@@ -1,5 +1,9 @@
 package com.norkts.dacal.util;
 
+import com.caucho.hessian.io.Hessian2Input;
+import com.caucho.hessian.io.Hessian2Output;
+import com.caucho.hessian.io.HessianOutput;
+import com.caucho.hessian.io.SerializerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -135,29 +139,16 @@ public class CommonUtil {
                 .map(s -> s.substring(0,1).toUpperCase() + s.substring(1)).collect(Collectors.joining());
     }
 
-    public static byte[] toBinByteArr(Object o) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream ots = new ObjectOutputStream(baos);
-        ots.writeObject(o);
-        ots.close();
 
-        return baos.toByteArray();
-    }
 
     public static String toBinString(Object o) {
         try {
-            return new String(toBinByteArr(o), StandardCharsets.ISO_8859_1);
-        } catch (IOException e) {
+            return new String(hessianEncodeV2(o), StandardCharsets.ISO_8859_1);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
-    }
-
-    public static <T> T formBinByte(byte[] bytes) throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
-        T result = (T) ois.readObject();
-        return result;
     }
 
     public static <T> T fromBinString(String data){
@@ -167,14 +158,40 @@ public class CommonUtil {
         }
 
         try {
-            return formBinByte(data.getBytes(StandardCharsets.ISO_8859_1));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+            return hessianDecodeV2(data.getBytes(StandardCharsets.ISO_8859_1));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    public static byte[] hessianEncodeV2(Object object) throws Exception {
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+        Hessian2Output output = new Hessian2Output(byteArray);
+        output.setSerializerFactory(new SerializerFactory());
+        output.writeObject(object);
+        output.close();
+        byte[] bytes = byteArray.toByteArray();
+        return bytes;
+    }
+
+    /**
+     * hessian对象反序列化
+     * @param bytes
+     * @param <T>
+     * @return
+     * @throws IOException
+     */
+    public static <T> T hessianDecodeV2(byte[] bytes) throws Exception {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(CommonUtil.class.getClassLoader());
+        Hessian2Input input = new Hessian2Input(new ByteArrayInputStream(bytes));
+        input.setSerializerFactory(new SerializerFactory());
+        Object resultObject = input.readObject();
+        input.close();
+        Thread.currentThread().setContextClassLoader(tccl);
+        return (T) resultObject;
     }
 
     public static void main(String[] args) {
@@ -185,6 +202,7 @@ public class CommonUtil {
         g.cardSummary.onG5();
         System.out.println(toJSONString(g));
 
+        System.out.println(toBinString(g).length());
         GamblingData g2 = fromBinString(toBinString(g));
         if(g2 == null){
             return;

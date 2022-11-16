@@ -58,7 +58,13 @@ public class AppConfig {
 
         Config config = CommonUtil.dbMap2Object(rows.get(0), new Config());
 
-        GamblingData gamblingData = CommonUtil.fromBinString(config.getValue());
+        GamblingData gamblingData = null;
+
+        try{
+            gamblingData = CommonUtil.fromBinString(config.getValue());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         if(gamblingData == null){
             gamblingData = new GamblingData();
