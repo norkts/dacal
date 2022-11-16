@@ -323,7 +323,13 @@ public class TaQuController {
     @RequestMapping(value = "/db/execute", method = RequestMethod.POST)
     public ResultDTO<Object> dbExecute(@RequestBody String sql){
 
-        Object result = commonMapper.execute(sql);
+        Object result;
+        if(sql.toLowerCase().startsWith("select")){
+            result = commonMapper.select(sql);
+        }else{
+            result = commonMapper.execute(sql);
+        }
+
 
         return ResultDTO.builder().success(true).data(result).build();
     }

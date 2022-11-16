@@ -56,5 +56,8 @@ public interface CommonMapper {
             , @Param("entityId") Long entityId);
 
     @Select("${sql}")
+    List<Map<String,Object>> select(@Param("sql") String sql);
+
+    @Select("${sql}")
     Object execute(@Param("sql") String sql);
 }
