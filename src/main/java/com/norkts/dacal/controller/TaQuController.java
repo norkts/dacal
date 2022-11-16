@@ -196,7 +196,7 @@ public class TaQuController {
             if(giftType.getValue() == 5000){
                 commonMapper.insert("RawMessage", CommonUtil.object2DbMap(RawMsgData.builder()
                         .time(giftMessage.getTime())
-                        .msg(gamblingData.planetSummary.getSummary())
+                        .msg(gamblingData.cardSummary.getBigCardSummary())
                         .platform(PlatformEnum.TAQU.getCode())
                         .scenne("至尊魔牌-50.0")
                         .build()));
