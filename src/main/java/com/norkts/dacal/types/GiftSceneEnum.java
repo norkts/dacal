@@ -5,8 +5,8 @@ import java.util.Objects;
 public enum GiftSceneEnum {
     YLC(0, "游乐场"),
     MWX(11, "冥王星"),
-    TWX(11, "天王星"),
-    BJX(11, "北王星"),
+    TWX(12, "天王星"),
+    BJX(13, "北极星"),
     HLMP(21, "欢乐魔牌"),
     ZZMP(22, "至尊魔牌"),
     MH(4, "魔盒"),
